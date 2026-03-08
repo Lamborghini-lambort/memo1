@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Kimi API 测试</title>
+    <style>
+        body { font-family: Arial; max-width: 900px; margin: 50px auto; padding: 20px; background: #f5f5f5; }
+        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #6366f1; }
+        .test-item { background: #f9fafb; border: 1px solid #e5e7eb; padding: 20px; margin: 20px 0; border-radius: 6px; }
+        button { background: #6366f1; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 5px; }
+        button:hover { background: #4f46e5; }
+        textarea, input[type="text"] { width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #d1d5db; border-radius: 4px; }
+        .result { background: #1f2937; color: #f3f4f6; padding: 15px; border-radius: 4px; margin-top: 10px; white-space: pre-wrap; font-size: 13px; }
+        .status { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; margin-left: 10px; }
+        .success { background: #10b981; color: white; }
+        .error { background: #ef4444; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌙 Kimi API 测试</h1>
+        
+        <div class="test-item">
+            <h2>1️⃣ 意图理解</h2>
+            <textarea id="intent_product">智能手表，支持心率监测和睡眠追踪</textarea>
+            <input type="text" id="intent_scene" value="社交媒体广告">
+            <button onclick="testIntent()">测试</button>
+            <div id="intent_result"></div>
+        </div>
+
+        <div class="test-item">
+            <h2>2️⃣ 关键词挖掘</h2>
+            <textarea id="keyword_product">无线蓝牙耳机，主动降噪，续航 30 小时</textarea>
+            <button onclick="testKeyword()">测试</button>
+            <div id="keyword_result"></div>
+        </div>
+
+        <div class="test-item">
+            <h2>3️⃣ 文案生成</h2>
+            <textarea id="generate_product">智能手表</textarea>
+            <input type="text" id="generate_keywords" value="健康监测，长续航">
+            <input type="text" id="generate_scene" value="电商详情页">
+            <button onclick="testGenerate()">测试</button>
+            <div id="generate_result"></div>
+        </div>
+
+        <div class="test-item">
+            <h2>4️⃣ 质量检测</h2>
+            <textarea id="quality_content">这款手机拍照清晰，续航给力</textarea>
+            <button onclick="testQuality()">测试</button>
+            <div id="quality_result"></div>
+        </div>
+
+        <div class="test-item">
+            <h2>5️⃣ 内容审核</h2>
+            <textarea id="review_content">2025 新款智能手机，限时特价</textarea>
+            <button onclick="testReview()">测试</button>
+            <div id="review_result"></div>
+        </div>
+    </div>
+
+    <script>
+        async function callAPI(endpoint, data) {
+            try {
+                const response = await fetch(`http://localhost:8081${endpoint}`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                return await response.json();
+            } catch (error) {
+                return {code: 500, msg: error.message};
+            }
+        }
+
+        function showResult(id, result) {
+            const el = document.getElementById(id);
+            const status = result.code === 200 ? '<span class="status success">✅成功</span>' : '<span class="status error">❌失败</span>';
+            el.innerHTML = `<div>${status}</div><div class="result">${JSON.stringify(result, null, 2)}</div>`;
+        }
+
+        async function testIntent() {
+            const result = await callAPI('/mcp/intent', {
+                productInfo: document.getElementById('intent_product').value,
+                sceneType: document.getElementById('intent_scene').value
+            });
+            showResult('intent_result', result);
+        }
+
+        async function testKeyword() {
+            const result = await callAPI('/mcp/keyword', {
+                productInfo: document.getElementById('keyword_product').value
+            });
+            showResult('keyword_result', result);
+        }
+
+        async function testGenerate() {
+            const result = await callAPI('/mcp/generate', {
+                productInfo: document.getElementById('generate_product').value,
+                keywords: document.getElementById('generate_keywords').value,
+                sceneType: document.getElementById('generate_scene').value
+            });
+            showResult('generate_result', result);
+        }
+
+        async function testQuality() {
+            const result = await callAPI('/mcp/quality', {
+                content: document.getElementById('quality_content').value
+            });
+            showResult('quality_result', result);
+        }
+
+        async function testReview() {
+            const result = await callAPI('/mcp/review', {
+                content: document.getElementById('review_content').value
+            });
+            showResult('review_result', result);
+        }
+    </script>
+</body>
+</html>

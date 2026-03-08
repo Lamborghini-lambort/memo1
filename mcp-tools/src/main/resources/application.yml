@@ -3,3 +3,10 @@ server:
 spring:
   application:
     name: mcp-tools
+
+# LLM 配置（支持 Kimi 和通义千问）
+llm:
+  provider: kimi  # kimi 或 qwen
+  api:
+    key: ${MOONSHOT_API_KEY:sk-aUbQL11X1SVze8SyD1sdbHyalmeLlJSLXqZL1vn8iumXdqVN}  # Kimi API Key
+    secret: ${MOONSHOT_API_SECRET:}
