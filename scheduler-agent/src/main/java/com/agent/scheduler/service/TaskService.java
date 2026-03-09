@@ -49,7 +49,8 @@ public class TaskService {
             params.put("taskId", taskId);
             params.put("productInfo", productInfo);
             params.put("sceneType", sceneType);
-            Result<String> result = restTemplate.postForObject(WORKER_URL + "/intent", params, Result.class);
+            // V2: 使用 LLM 驱动的意图理解 Agent
+            Result<String> result = restTemplate.postForObject(WORKER_URL + "/intent/v2", params, Result.class);
 
             if (result != null && result.getCode() == 200) {
                 task.setIntent(result.getData());
@@ -65,7 +66,8 @@ public class TaskService {
                 params = new JSONObject();
                 params.put("taskId", taskId);
                 params.put("productInfo", productInfo);
-                Result<String> keywordResult = restTemplate.postForObject(WORKER_URL + "/keyword", params, Result.class);
+                // V2: 使用 LLM 驱动的关键词挖掘 Agent
+                Result<String> keywordResult = restTemplate.postForObject(WORKER_URL + "/keyword/v2", params, Result.class);
 
                 if (keywordResult != null && keywordResult.getCode() == 200) {
                     task.setKeywords(keywordResult.getData());
@@ -83,7 +85,8 @@ public class TaskService {
                     params.put("productInfo", productInfo);
                     params.put("keywords", keywordResult.getData());
                     params.put("sceneType", sceneType);
-                    Result<String> generateResult = restTemplate.postForObject(WORKER_URL + "/generate", params, Result.class);
+                    // V2: 使用 LLM 驱动的文案生成 Agent
+                Result<String> generateResult = restTemplate.postForObject(WORKER_URL + "/generate/v2", params, Result.class);
 
                     if (generateResult != null && generateResult.getCode() == 200) {
                         task.setContent(generateResult.getData());
@@ -99,7 +102,8 @@ public class TaskService {
                         params = new JSONObject();
                         params.put("taskId", taskId);
                         params.put("content", generateResult.getData());
-                        Result<Integer> qualityResult = restTemplate.postForObject(WORKER_URL + "/quality", params, Result.class);
+                        // V2: 使用 LLM 驱动的质量检测 Agent
+                Result<Integer> qualityResult = restTemplate.postForObject(WORKER_URL + "/quality/v2", params, Result.class);
 
                         if (qualityResult != null && qualityResult.getCode() == 200) {
                             task.setQualityScore(qualityResult.getData());
@@ -116,7 +120,8 @@ public class TaskService {
                             params.put("taskId", taskId);
                             params.put("content", generateResult.getData());
                             params.put("sceneType", sceneType);
-                            Result<String> formatResult = restTemplate.postForObject(WORKER_URL + "/format", params, Result.class);
+                            // V2: 使用 LLM 驱动的格式排版 Agent
+                Result<String> formatResult = restTemplate.postForObject(WORKER_URL + "/format/v2", params, Result.class);
 
                             if (formatResult != null && formatResult.getCode() == 200) {
                                 task.setFormattedContent(formatResult.getData());
@@ -132,7 +137,8 @@ public class TaskService {
                                 params = new JSONObject();
                                 params.put("taskId", taskId);
                                 params.put("content", formatResult.getData());
-                                Result<String> reviewResult = restTemplate.postForObject(WORKER_URL + "/review", params, Result.class);
+                                // V2: 使用 LLM 驱动的内容审核 Agent
+                Result<String> reviewResult = restTemplate.postForObject(WORKER_URL + "/review/v2", params, Result.class);
 
                                 if (reviewResult != null && reviewResult.getCode() == 200) {
                                     task.setReviewResult(reviewResult.getData());

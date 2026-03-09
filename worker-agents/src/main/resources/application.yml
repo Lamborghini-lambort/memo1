@@ -8,3 +8,10 @@ spring:
       host: localhost
       port: 6379
       database: 1
+
+# LLM API 配置
+llm:
+  api:
+    key: sk-aUbQL11X1SVze8SyD1sdbHyalmeLlJSLXqZL1vn8iumXdqVN  # Kimi API Key（如有变化请更新）
+  provider: kimi  # 可选：kimi 或 qwen
+  model: moonshot-v1-8k

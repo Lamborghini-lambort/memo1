@@ -88,11 +88,22 @@ public class McpController {
     @PostMapping("/generate")
     public Result<String> generateText(@RequestBody JSONObject params) {
         try {
+            // 检查是否包含 prompt（ReAct 模式）
+            String prompt = params.getString("prompt");
+            if (prompt != null && !prompt.isEmpty()) {
+                // ReAct 模式：使用增强的 prompt
+                log.info("ReAct 模式：使用增强 prompt 进行文案生成...");
+                String content = llmService.callLLM(prompt);
+                log.info("文案生成完成 (ReAct 模式)");
+                return Result.success(content);
+            }
+            
+            // 传统模式：使用默认 prompt
             String productInfo = params.getString("productInfo");
             String keywords = params.getString("keywords");
             String sceneType = params.getString("sceneType");
             
-            String prompt = String.format("""
+            String defaultPrompt = String.format("""
                 你是一名资深营销文案专家，请根据以下信息创作一篇营销文案：
                 
                 【产品信息】%s
@@ -109,9 +120,9 @@ public class McpController {
                 请直接输出文案内容，不需要解释。
                 """, productInfo, keywords, sceneType);
             
-            log.info("调用 LLM 进行文案生成...");
-            String content = llmService.callLLM(prompt);
-            log.info("文案生成完成");
+            log.info("传统模式：调用 LLM 进行文案生成...");
+            String content = llmService.callLLM(defaultPrompt);
+            log.info("文案生成完成 (传统模式)");
             
             return Result.success(content);
         } catch (Exception e) {
@@ -167,9 +178,21 @@ public class McpController {
     @PostMapping("/format")
     public Result<String> formatContent(@RequestBody JSONObject params) {
         try {
+            // 检查是否包含 prompt（ReAct 模式）
+            String prompt = params.getString("prompt");
+            if (prompt != null && !prompt.isEmpty()) {
+                // ReAct 模式：使用 LLM 进行智能排版
+                log.info("ReAct 模式：使用 LLM 进行格式排版...");
+                String formattedContent = llmService.callLLM(prompt);
+                log.info("格式排版完成 (ReAct 模式)");
+                return Result.success(formattedContent);
+            }
+            
+            // 传统模式：基于规则排版
             String content = params.getString("content");
             String sceneType = params.getString("sceneType");
             String formattedContent;
+            
             if ("小红书".equals(sceneType)) {
                 formattedContent = "✨ 姐妹们！这款手机真的绝了！\n\n" + content + "\n\n#小红书种草 #数码好物 #手机推荐";
             } else if ("抖音".equals(sceneType)) {
@@ -177,8 +200,11 @@ public class McpController {
             } else {
                 formattedContent = "【电商推广文案】\n\n" + content + "\n\n#电商爆款 #性价比手机 #现货速发";
             }
+            
+            log.info("格式排版完成 (传统模式)");
             return Result.success(formattedContent);
         } catch (Exception e) {
+            log.error("格式排版失败：{}", e.getMessage(), e);
             return Result.fail("格式排版失败：" + e.getMessage());
         }
     }
