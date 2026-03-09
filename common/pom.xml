@@ -16,6 +16,12 @@
             <artifactId>spring-boot-starter</artifactId>
             <version>3.2.0</version>
         </dependency>
+        <!-- HTTP 客户端：用于调用大模型 API -->
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
+            <version>5.2.1</version>
+        </dependency>
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>

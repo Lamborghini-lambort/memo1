@@ -1,4 +1,4 @@
-package com.agent.mcp.service;
+package com.agent.common.llm;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.client5.http.classic.methods.HttpPost;
@@ -11,6 +11,13 @@ import org.springframework.stereotype.Service;
 
 import java.nio.charset.StandardCharsets;
 
+/**
+ * LLM Service - 调用大模型 API（公共基础服务）
+ * 
+ * 支持 Kimi 和通义千问，根据配置自动切换
+ * 
+ * 此服务放在 common 模块中，供 mcp-tools 和 worker-agents 共同使用
+ */
 @Slf4j
 @Service
 public class LlmService {
